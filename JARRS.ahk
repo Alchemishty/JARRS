@@ -5,7 +5,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 messageToggle := 0
 
-FileRead, rMessage, Recruit Message.txt
+FileRead, rMessage, Recruiting Message.txt
 FileRead, aMessage1, Auto Message 1.txt 
 FileRead, aMessage2, Auto Message 2.txt 
 FileRead, aMessage3, Auto Message 3.txt 

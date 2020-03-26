@@ -6,9 +6,24 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 messageToggle := 0
 
 FileRead, rMessage, Recruiting Message.txt
-FileRead, aMessage1, Auto Message 1.txt 
-FileRead, aMessage2, Auto Message 2.txt 
-FileRead, aMessage3, Auto Message 3.txt 
+
+Loop, read, Auto Messages.txt
+{
+    if InStr(A_LoopReadLine, "Message1:") {
+        RegExMatch(A_LoopReadLine, "O)Message1:(.+)", Message1)
+	message1 := Message1.value(1)
+    }
+
+    if InStr(A_LoopReadLine, "Message2:") {
+        RegExMatch(A_LoopReadLine, "O)Message2:(.+)", Message2)
+	message2 := Message2.value(1)
+    }
+
+    if InStr(A_LoopReadLine, "Message3:") {
+        RegExMatch(A_LoopReadLine, "O)Message3:(.+)", Message3)
+	message3 := Message3.value(1)
+    }        
+}
 
 Msg(s)
 {
@@ -43,17 +58,17 @@ Return
 return
 
 ~1::
- SendInput,
+ Send,
     (
-	{Backspace}SendRaw %aMessage1%
+	{Backspace}{Raw}%message1%
 
     )
 return
 
 ~2::
- SendInput,
+ Send,
     (
-	{Backspace}SendRaw %aMessage2%
+	{Backspace}{Raw}%message2% 
 
     )
 return
@@ -61,7 +76,7 @@ return
 ~3::
  SendInput,
     (
-	{Backspace}SendRaw %aMessage3%
+	{Backspace}{Raw}%message3%
 
     )
 return

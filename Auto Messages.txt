@@ -1,5 +1,9 @@
-Message1:Hello there! Good to meet you :)
+Message1:Do you mind if I ask you a couple of questions first?
 
-Message2:Such a pleasant day!
+Message2:Since this is an anime-focused clan, do you have an anime that you like?
 
-Message3:See you later o/
+Message3:Do you have a discord account?
+
+Message4:Our discord link is discord.gg/hentai . Once you fill out the app there, I'll send you a clan invite :)
+
+Message5:Alright, you should be all set on discord. Be sure to say hi in #general-chat when you get a chance. Welcome! :D

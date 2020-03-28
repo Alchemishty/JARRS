@@ -3,7 +3,9 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-messageToggle := 0
+messageToggle := False
+recruitMessageOn := "Recruit Message ON"
+recruitMessageOff := "Recruit Message OFF"
 
 FileRead, rMessage, Recruiting Message.txt
 
@@ -22,7 +24,17 @@ Loop, read, Auto Messages.txt
     if InStr(A_LoopReadLine, "Message3:") {
         RegExMatch(A_LoopReadLine, "O)Message3:(.+)", Message3)
 	message3 := Message3.value(1)
-    }        
+    }
+
+    if InStr(A_LoopReadLine, "Message4:") {
+        RegExMatch(A_LoopReadLine, "O)Message4:(.+)", Message4)
+	message4 := Message4.value(1)
+    }
+
+    if InStr(A_LoopReadLine, "Message5:") {
+        RegExMatch(A_LoopReadLine, "O)Message5:(.+)", Message5)
+	message5 := Message5.value(1)
+    }
 }
 
 Msg(s)
@@ -40,43 +52,82 @@ RemoveToolTip:
 }
 
 LoopyLabel:
-    if (!messageToggle)	
-	return
-
+    if (!messageToggle)	{ ; I like this solution to the loop problem.
+	    return
+    }
     SendRaw %rMessage%
 Return
 
 ~Home::
     messageToggle := !messageToggle
+    
     if(messageToggle) {
-        msg("Message Toggle ON")
+        msg(recruitMessageOn)
         SetTimer, LoopyLabel, 12000
     } else {
-        msg("Message Toggle OFF")
+        msg(recruitMessageOff)
         SetTimer, LoopyLabel, off
     }
 return
 
-~1::
+~Pause::Pause
+
+^1::
+if(messageToggle) {
+    messageToggle := False
+    msg(recruitMessageOff)
+}
  Send,
     (
-	{Backspace}{Raw}%message1%
-
+	{Raw}%message1%
+    
     )
 return
 
-~2::
+^2::
+if(messageToggle) {
+    messageToggle := False
+    msg(recruitMessageOff)
+}
  Send,
     (
-	{Backspace}{Raw}%message2% 
-
+	{Raw}%message2% 
+    
     )
 return
 
-~3::
+^3::
+if(messageToggle) {
+    messageToggle := False
+    msg(recruitMessageOff)
+}
  SendInput,
     (
-	{Backspace}{Raw}%message3%
+	{Raw}%message3%
+
+    )
+return
+
+^4::
+if(messageToggle) {
+    messageToggle := False
+    msg(recruitMessageOff)
+}
+ SendInput,
+    (
+	{Raw}%message4%
+
+    )
+return
+
+^5::
+if(messageToggle) {
+    messageToggle := False
+    msg(recruitMessageOff)
+}
+ SendInput,
+    (
+	{Raw}%message5%
 
     )
 return

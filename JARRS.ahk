@@ -10,17 +10,6 @@ recruitMessageOff := "Recruit Message OFF"
 
 FileRead, rMessage, Recruiting Message.txt
 
-SetTimer,Loop1,900
-return
-Loop1:
-  IfWinNotActive, Warframe
-  {
-   messageToggle := False
-   msg(recruitMessageOff)
-   return
-  }
-  Return
-
 Loop, read, Auto Messages.txt
 {
     if InStr(A_LoopReadLine, "Message1:") {
@@ -48,6 +37,17 @@ Loop, read, Auto Messages.txt
 	message5 := Message5.value(1)
     }
 }
+
+SetTimer,Loop1,900
+return
+Loop1:
+  IfWinNotActive, Untitled - Notepad
+  {
+   messageToggle := False
+   msg(recruitMessageOff)
+   return
+  }
+  Return
 
 Msg(s)
 {

@@ -4,6 +4,7 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 messageToggle := False
+isKeyActive := False
 recruitMessageOn := "Recruit Message ON"
 recruitMessageOff := "Recruit Message OFF"
 
@@ -130,4 +131,21 @@ if(messageToggle) {
 	{Raw}%message5%
 
     )
+return
+
+^K::
+    isKeyActive := !isKeyActive
+    
+    if(isKeyActive) {
+        Gui, Add, Text, x12 y9 , Message1: %message1%
+	Gui, Add, Text, x12 y39 , Message2: %message2%
+	Gui, Add, Text, x12 y69 , Message3: %message3%
+	Gui, Add, Text, x12 y99 , Message4: %message4%
+	Gui, Add, Text, x12 y129 , Message5: %message5%
+	Gui, Show, AutoSize Center
+	Gui, +AlwaysOnTop
+	Return
+    } else {
+        Gui, Destroy
+    }
 return

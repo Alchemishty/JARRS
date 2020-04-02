@@ -9,6 +9,7 @@ messageToggle := False
 isKeyActive := False
 recruitMessageOn := "Recruit Message ON"
 recruitMessageOff := "Recruit Message OFF"
+status := "OFF"
 
 ; Read in the Recruiting Message text file
 FileRead, rMessage, Recruiting Message.txt
@@ -53,6 +54,21 @@ Loop, read, Auto Messages.txt
 ;   return
 ;  }
 ;  Return
+
+;Loop to check if recruiting message is on and update GUI status accordingly
+SetTimer,Loop1,500
+return
+Loop1:
+  if (messageToggle) 
+  {
+    status := "ON"
+  }
+  else
+  {
+    status := "OFF"
+  }
+  GuiControl, , Tvar, Macro is %status%
+  Return
 
 ; Print a tooltip to notify if the recruit message loop is active. Hotkeys for auto-replies will remain active.
 Msg(s)
@@ -184,6 +200,7 @@ return
 	    Gui, Add, Text, x12 y69 , Message3: %message3%
 	    Gui, Add, Text, x12 y99 , Message4: %message4%
 	    Gui, Add, Text, x12 y129 , Message5: %message5%
+	    Gui, Add, Text, x12 y159 vTvar, Macro is %status%
 	    Gui, Show, AutoSize Center
 	    Gui, +AlwaysOnTop
 	Return

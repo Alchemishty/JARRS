@@ -5,11 +5,42 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode, 2  ; Check that the given string matches somewhere in the window title
 SetKeyDelay, 15  ; Feels a little more human. Fast, but not too fast.
 
+
 messageToggle := False
 isKeyActive := False
+macroStart := False
 recruitMessageOn := "Recruit Message ON"
 recruitMessageOff := "Recruit Message OFF"
 status := "OFF"
+
+Rand(min,max) {
+    Random, randomNumber, min, max
+    return randomNumber
+}
+
+; Set a random key delay.
+RandomKeyDelay() {
+    SetKeyDelay, % Rand(15,30)
+    return
+}
+
+; Check if the script is being run as admin.
+; This is required to prevent the user from typing or clicking around while input is being sent
+full_command_line := DllCall("GetCommandLine", "str")
+
+if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
+{
+    try
+    {
+        if A_IsCompiled
+            Run *RunAs "%A_ScriptFullPath%" /restart
+        else
+            Run *RunAs "%A_AhkPath%" /restart "%A_ScriptFullPath%"
+    }
+    ExitApp
+}
+; MsgBox A_IsAdmin: %A_IsAdmin%`nCommand line: %full_command_line%
+
 
 ; Read in the Recruiting Message text file
 FileRead, rMessage, Recruiting Message.txt
@@ -43,6 +74,7 @@ Loop, read, Auto Messages.txt
     }
 }
 
+
 ; Loop to check if current window is the targeted active window.
 ;SetTimer,Loop1,900
 ;return
@@ -54,6 +86,7 @@ Loop, read, Auto Messages.txt
 ;   return
 ;  }
 ;  Return
+
 
 ;Loop to check if recruiting message is on and update GUI status accordingly
 SetTimer,Loop1,500
@@ -69,6 +102,7 @@ Loop1:
   }
   GuiControl, , Tvar, Macro is %status%
   Return
+
 
 ; Print a tooltip to notify if the recruit message loop is active. Hotkeys for auto-replies will remain active.
 Msg(s)
@@ -86,13 +120,15 @@ RemoveToolTip:
     ;return
 }
 
+
 LoopyLabel:
     if (!messageToggle)	{ ; I like this solution to the loop problem.
 	    return
     }
 
     ; Make sure the active window is correct before sending input
-    IfWinNotActive, Untitled - Notepad
+    ; IfWinNotActive, Untitled - Notepad
+    IfWinNotActive, Warframe
     {
         messageToggle := False
         msg(recruitMessageOff)
@@ -100,95 +136,127 @@ LoopyLabel:
     }
 
     ; Send the recruit message
-    ;BlockInput, On
+    BlockInput, On
+    RandomKeyDelay()
     SendRaw %rMessage%
-    ;BlockInput, Off
+    BlockInput, Off
 Return
 
 ; Press Home key to toggle the message on and off
-Home::
+~^=::
     messageToggle := !messageToggle
+    macroStart := !macroStart
     
-    if(messageToggle) {
+    if (messageToggle) {
         msg(recruitMessageOn)
-        SetTimer, LoopyLabel, 12100 ; Send the recruit message every 121 sec
-    } else {
+        SetTimer, LoopyLabel, 121000 ; Send the recruit message every 121 sec
+    }
+    else {
         msg(recruitMessageOff)
         SetTimer, LoopyLabel, off
     }
 return
 
+
 ; Press the Pause/Break key to suspend the script and hotkeys (i.e. turn it off without quitting)
-~Pause::
+~^-::
     Suspend, Toggle
-    messageToggle := !messageToggle
-    msg(recruitMessageOff)
+    ; Pause, Toggle ; Can be one or the other. Both prevents starting the script again.
+
+    if (macroStart) {
+        messageToggle := !messageToggle
+        if (!messageToggle) {
+            msg(recruitMessageOff)
+            SetTimer, LoopyLabel, off
+        }
+        else {
+            msg(recruitMessageOn)
+            SetTimer, LoopyLabel, 12100
+        }
+    }
 return
+
 
 ; Send Message 1
 ^1::
-    if(messageToggle) {
+    if (messageToggle) {
         messageToggle := False
         msg(recruitMessageOff)
     }
+    BlockInput, On
+    RandomKeyDelay()
     Send,
         (
         {Raw}%message1%
         
         )
+    BlockInput, Off
 return
 
 ; Send Message 2
 ^2::
-    if(messageToggle) {
+    if (messageToggle) {
         messageToggle := False
         msg(recruitMessageOff)
     }
+    BlockInput, On
+    RandomKeyDelay()
     Send,
         (
         {Raw}%message2% 
         
         )
+    BlockInput, Off
 return
 
 ; Send Message 3
 ^3::
-    if(messageToggle) {
+    if (messageToggle) {
         messageToggle := False
         msg(recruitMessageOff)
     }
+    BlockInput, On
+    RandomKeyDelay()
     Send,
         (
         {Raw}%message3%
 
         )
+    BlockInput, Off
 return
 
 ; Send Message 4
 ^4::
-    if(messageToggle) {
+    if (messageToggle) {
         messageToggle := False
         msg(recruitMessageOff)
     }
+    BlockInput, On
+    RandomKeyDelay()
     Send,
         (
         {Raw}%message4%
 
         )
+    BlockInput, Off
 return
 
 ; Send Message 5
 ^5::
-    if(messageToggle) {
+    if (messageToggle) {
         messageToggle := False
         msg(recruitMessageOff)
     }
+    BlockInput, On
+    RandomKeyDelay()
     Send,
         (
         {Raw}%message5%
 
         )
+    BlockInput, Off
 return
+
 
 ; Open the Key
 ^K::
@@ -201,8 +269,11 @@ return
 	    Gui, Add, Text, x12 y99 , Message4: %message4%
 	    Gui, Add, Text, x12 y129 , Message5: %message5%
 	    Gui, Add, Text, x12 y159 vTvar, Macro is %status%
-	    Gui, Show, AutoSize Center
+	    Gui, Show, NoActivate AutoSize, Recruiting Auto-Replies
 	    Gui, +AlwaysOnTop
+        ; Move the window to the top-right of the screen
+        WinGetPos,,, Width, Height, Recruiting Auto-Replies
+        WinMove, Recruiting Auto-Replies,, (A_ScreenWidth - Width - 25), 25
 	Return
     } else {
         Gui, Destroy

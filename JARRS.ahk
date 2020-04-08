@@ -72,6 +72,11 @@ Loop, read, Auto Messages.txt
         RegExMatch(A_LoopReadLine, "O)Message5:(.+)", Message5)
 	message5 := Message5.value(1)
     }
+
+    if InStr(A_LoopReadLine, "Message6:") {
+        RegExMatch(A_LoopReadLine, "O)Message6:(.+)", Message6)
+	message6 := Message6.value(1)
+    }
 }
 
 
@@ -149,7 +154,7 @@ Return
     
     if (messageToggle) {
         msg(recruitMessageOn)
-        SetTimer, LoopyLabel, 121000 ; Send the recruit message every 121 sec
+        SetTimer, LoopyLabel, 130000 ; Send the recruit message every 121 sec
     }
     else {
         msg(recruitMessageOff)
@@ -257,18 +262,35 @@ return
     BlockInput, Off
 return
 
+; Send Message 6
+^6::
+    if (messageToggle) {
+        messageToggle := False
+        msg(recruitMessageOff)
+    }
+    BlockInput, On
+    RandomKeyDelay()
+    Send,
+        (
+        {Raw}%message6%
+
+        )
+    BlockInput, Off
+return
+
 
 ; Open the Key
 ^K::
     isKeyActive := !isKeyActive
     
     if(isKeyActive) {
-        Gui, Add, Text, x12 y9 , Message1: %message1%
-	    Gui, Add, Text, x12 y39 , Message2: %message2%
-	    Gui, Add, Text, x12 y69 , Message3: %message3%
-	    Gui, Add, Text, x12 y99 , Message4: %message4%
-	    Gui, Add, Text, x12 y129 , Message5: %message5%
-	    Gui, Add, Text, x12 y159 vTvar, Macro is %status%
+        Gui, Add, Text, x12 y9 , Ctrl + 1: %message1%
+	    Gui, Add, Text, x12 y39 , Ctrl + 2: %message2%
+	    Gui, Add, Text, x12 y69 , Ctrl + 3: %message3%
+	    Gui, Add, Text, x12 y99 , Ctrl + 4: %message4%
+	    Gui, Add, Text, x12 y129 , Ctrl + 5: %message5%
+        Gui, Add, Text, x12 y159 , Ctrl + 6: %message6%
+	    Gui, Add, Text, x12 y189 vTvar, Macro is %status%
 	    Gui, Show, NoActivate AutoSize, Recruiting Auto-Replies
 	    Gui, +AlwaysOnTop
         ; Move the window to the top-right of the screen
